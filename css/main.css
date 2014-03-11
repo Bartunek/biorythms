@@ -98,8 +98,19 @@ textarea {
    ========================================================================== */
 
 .container {
-    width: 50%;
+    width: 80%;
     margin: 50px auto;
+}
+
+.graph {
+    margin: 30px 0;
+    padding: 30px;
+    background: #eee;
+}
+
+#canvas {
+    background: #fff;
+    height: 300px;
 }
 
 

@@ -27,7 +27,7 @@
             <p>Biorythms</p>
             <form action="">
                 <input type="date" name="date" id="js-date" value="1986-06-05">
-                <input type="date" name="actual" id="js-actual" value="2014-03-10">
+                <input type="date" name="actual" id="js-actual" value="2014-03-11">
                 <input type="submit" id="js-submit" value="Spočítat" />
             </form>
             <p>
@@ -39,11 +39,16 @@
             <p>
                 Intelektuální: <span class="js-int"></span>
             </p>
-                
+            <div class="graph">
+                <div id="canvas"></div>
+            </div>
         </div>
+
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="js/vendor/raphael.js"></script>
+        <script src="js/graph.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 

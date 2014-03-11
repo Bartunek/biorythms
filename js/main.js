@@ -2,9 +2,9 @@
 Bio = function (bday, actdate, range) {
 
 	var self = this,
-		now = Date.now(),
+		now = new Date(Date.now()),
 		dayLength = 86400000,
-		bDay, actDate, daysFromBirth, range,
+		bDay, actDate, daysFromBirth,
 		roundNum = function (num, dec) {
 			return  Math.round( num * Math.pow( 10, dec ) ) / Math.pow( 10, dec );
 		};
@@ -35,7 +35,7 @@ Bio = function (bday, actdate, range) {
 			console.log("Nebylo zadáno datum narození");
 			return false;
 		}
-		return self;
+		return this;
 	};
 
 	self.getPhysical = function (days) {
@@ -102,5 +102,21 @@ $(document).ready(function() {
 	});
 
 	$('form').trigger('submit');
+
+	var settings = {
+		width: $('#canvas').innerWidth(),
+		height: $('#canvas').innerHeight(),
+		table: {
+			paddingTop: 40,
+			paddingLeft: 40,
+			paddingRight: 20,
+			paddingBottom: 20,
+			rows: 4,
+			cols: 25
+		}
+	};
+	var g = new Graphie(window, "canvas", settings);
+
+	g._drawGrid();
 
 });
