@@ -19,8 +19,9 @@ Bio = function (bday, actdate, accuracy, range) {
 			console.log("Nebylo zadáno datum narození");
 			return false;
 		}
-		actDate = actdate ? actdate - dayLength : new Date(now.getYear(), now.getMonth(), now.getDate()) - dayLength;
+		actDate = actdate ? actdate - dayLength : new Date(now.getFullYear(), now.getMonth(), now.getDate()) - dayLength;
 		daysFromBirth = Math.round( ( actDate - bDay ) / dayLength);
+		console.log(new Date(actdate));
 	};
 
 	self.getDate = function () {
@@ -30,7 +31,7 @@ Bio = function (bday, actdate, accuracy, range) {
 	self.setDate = function (date) {
 		if (typeof date.getDate() === 'number'){
 			console.log(date);
-			actDate = date - dayLength;
+			actDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()) - dayLength;
 			daysFromBirth = Math.round( ( actDate - bDay ) / dayLength);
 		} else {
 			console.log("Nebylo zadáno datum narození");
@@ -59,8 +60,8 @@ Bio = function (bday, actdate, accuracy, range) {
 		return roundNum( coef * Math.sin( ( ( daysFromBirth % 33 ) * 2 * Math.PI ) / 33 ), acc);
 	};
 
-	console.log(daysFromBirth);
-	console.log(arguments);
+	// console.log(daysFromBirth);
+	// console.log(arguments);
 
 	self.init(bday, actdate, range);
 	return self;
@@ -85,9 +86,15 @@ $(document).ready(function() {
 	
 	$('form').on('submit', function(event) {
 		event.preventDefault();
+		
+		act = $(this).find('#js-actual').val();
+		actYear = act.substr(0, 4);
+		actMonth = act.substr(5, 2);
+		actDay = act.substr(8);
 
+		bio.setDate( new Date(actYear, actMonth, actDay) );
 		console.log("bday:", $input.val(), "actual:", $actual.val());
-		console.log("day:", day, "month:", month, "year:", year);
+		console.log(bio.getDate());
 
 		$('.js-phy').text(bio.getPhysical(100));
 		$('.js-emo').text(bio.getEmotional(100));
@@ -97,12 +104,13 @@ $(document).ready(function() {
 
 	$('#js-actual').on('change', function(event) {
 		event.preventDefault();
-		act = $(this).val();
+		var act = $(this).val();
 		actYear = act.substr(0, 4);
 		actMonth = act.substr(5, 2);
 		actDay = act.substr(8);
 
 		bio.setDate( new Date(actYear, actMonth, actDay) );
+		console.log(bio.getDate());
 
 		$('.js-phy').text(bio.getPhysical(100));
 		$('.js-emo').text(bio.getEmotional(100));
@@ -143,7 +151,7 @@ $(document).ready(function() {
 	xDescriptions = [],
 	emoVals = [],
 	intVals = [],
-	phyVals = [],
+	phyVals = [], dateVals = [],
 	dayLength = 86400000,
 	days = settings.table.cols,
 	daysHalf = Math.abs(days / 2);
@@ -158,25 +166,50 @@ $(document).ready(function() {
 	};
 */
 	bio._setAccuracy(4);
+
+	var thisDay = new Date(Date.now());
 	for (var i = -(daysHalf), j = 0; i <= daysHalf; i++, j++) {
 		console.log("i:", i, "j:", j);
-		var date = new Date(Date.now() + (i * dayLength)),
+		
+		var date = new Date( Date.UTC(thisDay.getFullYear(), thisDay.getMonth() + 1, thisDay.getDate()) + (i * dayLength) + dayLength ),
 			txt = date.getDate();
 		xDescriptions.push(txt += '.');
-		emoVals.push(bio.setDate(date).getEmotional());
+		console.log('Date:', date, 'Year:', date.getFullYear());
+
+		if (i === 0) {
+			//debugger;
+		};
+
+		dateVals.push(date);
+		console.log(date);
+		bio.setDate(date);
+
+		emoVals.push(bio.getEmotional());
 		intVals.push(bio.getIntelectual());
 		phyVals.push(bio.getPhysical());
 	};
-
+	console.log("Date values", dateVals);
 
 	var g = new Graphie(window, "canvas", settings);
+
+	var roundNum = function (num, dec) {
+			return  Math.round( num * Math.pow( 10, dec ) ) / Math.pow( 10, dec );
+		},
+		changeValues = function(i){
+			console.log('Selected item:', i, 'Date:', dateVals[i]);
+
+			$('.js-phy').text( roundNum(phyVals[i] * 100, 2) );
+			$('.js-emo').text( roundNum(emoVals[i] * 100, 2) );
+			$('.js-int').text( roundNum(intVals[i] * 100, 2) );
+		};
 
 	g	._drawGrid()
 		._setVerticalDesc(yDescriptions)
 		._setHorizontalDesc(xDescriptions)
 		._drawCurve(emoVals, emoStyle)
 		._drawCurve(intVals, intStyle)
-		._drawCurve(phyVals, phyStyle);
+		._drawCurve(phyVals, phyStyle)
+		._setMaskFn(changeValues);
 
 	$(window).on('resize', function(event) {
 		settings.width = $('#canvas').innerWidth();
@@ -189,4 +222,5 @@ $(document).ready(function() {
 			._drawCurve(intVals, intStyle)
 			._drawCurve(phyVals, phyStyle);
 	});
+
 });

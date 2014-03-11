@@ -36,6 +36,7 @@ Graphie = function(window, id, settings) {
 		self.xDescItems = [];
 		self.yDescItems = [];
 		self.curves = [];
+		self.masks = [];
 		return self;
 	};
 
@@ -87,6 +88,7 @@ Graphie = function(window, id, settings) {
 	self._setDefaults = function(settings, defaults){
 		opts.width =				settings.width || defaults.width;
 		opts.height =				settings.height || defaults.height;
+		opts.dots = 				settings.dots || defaults.dots;
 		opts.table = {}; opts.xDesc = {}; opts.yDesc = {};
 		if (!settings.table) {
 			settings.table = {};
@@ -183,7 +185,7 @@ Graphie = function(window, id, settings) {
 	};
 
 	self._drawCurve = function (values, style, hoverStyle) {
-		var p = [],
+		var p = [], dots = [], masks = [],
 			xOrig = opts.table.paddingLeft,
 			yOrig = opts.table.paddingTop + ( opts.table.height / 2 ),
 			max = opts.table.height / 2,
@@ -192,7 +194,7 @@ Graphie = function(window, id, settings) {
 			hStyle = hoverStyle || opts.lineHover;
 
 		for (var i = 0; i < values.length; i++) {
-			var x, x0, x2, y, y0, y1, cp1, cp2, d0X, d0Y, d2X, d2Y, a, coords, line;
+			var x, x0, x2, y, y0, y1, cp1, cp2, d0X, d0Y, d2X, d2Y, a, coords, line, dot, mask;
 
 			// Actual X coords, next X coords, previous X coords
 			x = round( xOrig + ( X * i ) );
@@ -202,23 +204,23 @@ Graphie = function(window, id, settings) {
 			x0 = !isNaN(x0) ? x0 : x;
 			
 			// Actual Y coords, next Y coords, previous Y coords
-			y = round( yOrig + ( values[i] * max ) );
-			y2 = round( yOrig + ( values[i + 1] * max ) );
-			y0 = round( yOrig + ( values[i - 1] * max ) );
+			y = round( yOrig - ( values[i] * max ) );
+			y2 = round( yOrig - ( values[i + 1] * max ) );
+			y0 = round( yOrig - ( values[i - 1] * max ) );
 			y2 = !isNaN(y2) ? y2 : y;
 			y0 = !isNaN(y0) ? y0 : y;
 
 			// Differences
-			d0X = !isNaN(x0) ? ( x - (x - x0) / 2 ) : x;
-			d0Y = !isNaN(y0) ? ( y - (y - y0) / 2 ) : y;
-			d2X = !isNaN(x2) ? ( x - (x2 - x) / 2 ) : x;
-			d2Y = !isNaN(y2) ? ( y - (y2 - y) / 2 ) : y;
+			//d0X = !isNaN(x0) ? ( x - (x - x0) / 2 ) : x;
+			// d0Y = !isNaN(y0) ? ( y - (y - y0) / 2 ) : y;
+			// d2X = !isNaN(x2) ? ( x - (x2 - x) / 2 ) : x;
+			// d2Y = !isNaN(y2) ? ( y - (y2 - y) / 2 ) : y;
 
 			// console.log('x0:', x0, 'y0:', y0, 'x:', x, 'y:', y, 'x2:', x2, 'y2:', y2);
 			a = getAnchors(x0, y0, x, y, x2, y2);
 
 			coords = [a.x1, a.y1, x, y, a.x2, a.y2];
-			console.log(coords);
+			// console.log(coords);
 
 			cp1 = a.x1  + "," + a.y1 ;
 			cp2 = a.x2  + "," + a.y2 ;
@@ -229,17 +231,29 @@ Graphie = function(window, id, settings) {
 			if (i === 0) {
 				p.push("M" + x + "," + y );
 				p.push("C" + x + "," + y );
-				// debugger;
 			} else if (i + 1 === values.length) {
 				p.push("L" + x + "," + y );
 			} else {
-				// debugger;
 				p.push("C" + cp1 + "," + cp2 + "," + x + "," + y );
 			}
+
+			if (opts.dots) {
+				dot = r.circle(x, y, style['stroke-width'] * 2).attr({"fill": style.stroke, "stroke-width": 0}).hide();
+				dots.push(dot);
+			}
+
+			if (!self.masks.length){
+				// console.log("x0:", x0, "x:", x);
+				mask = r.rect( (i !== 0) ? ( x - ( X / 2 ) ) : x , yOrig - max, (y2 !== y && i !== 0) ? X : X / 2 , opts.table.height )
+						.attr({"stroke-width": 0, "fill": "rgba(255, 255, 255, 0)"})
+						.data("i", i);
+				
+				masks.push(mask);
+			}
+
 		};
 		//console.log('Path:', p.join(''));
 		line = r.path(p.join('')).attr(style);
-		self.curves.push(line);
 		line.hover(
 			function(){
 				this.attr(hStyle);
@@ -247,8 +261,42 @@ Graphie = function(window, id, settings) {
 			function(){
 				this.attr(style);
 			}, line, line);
+
+		var item = {
+			line: line,
+			values: values,
+			dots: dots
+		}
+
+		self.masks = self.masks.length ? self.masks : masks;
+		self.curves.push(item);
 		return self;
-	}
+	};
+
+	self._setMaskFn = function (inFn, outFn, inFn2, outFn2) {
+		var hoverIn = typeof inFn2 === 'function' ? inFn2 : function () {
+				var i = this.data("i");
+				for (var j = 0; j < self.curves.length; j++) {
+					self.curves[j].dots[i].show();
+				};
+				if (typeof inFn === "function") {
+					inFn.call(this, i);
+				}
+			},
+			hoverOut = typeof outFn2 === 'function' ? outFn2 : function () {
+				var i = this.data("i");
+				for (var j = 0; j < self.curves.length; j++) {
+					self.curves[j].dots[i].hide();
+				};
+				if (typeof outFn === "function") {
+					outFn.call(this, i);
+				}
+			};
+
+		for (var i = 0; i < self.masks.length; i++) {
+			self.masks[i].hover(hoverIn, hoverOut);
+		};
+	};
 
 	self._init();
 	self._setDefaults(settings, self.defaults);
@@ -259,6 +307,7 @@ Graphie = function(window, id, settings) {
 Graphie.prototype.defaults = {
 	width: 400,
 	height: 400,
+	dots: true,
 	table: {
 		paddingTop:		20,
 		paddingRight:	0,
@@ -289,7 +338,7 @@ Graphie.prototype.defaults = {
 		"stroke-opacity": 0.7,
 		"stroke-width": 4,
 	},
-	lineHover : {
+	lineHover: {
 		"stroke-opacity": 1
 	}
 };
