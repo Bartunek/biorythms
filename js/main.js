@@ -139,6 +139,7 @@ $(document).ready(function() {
 		._drawCurve(emoVals, emoStyle)
 		._drawCurve(intVals, intStyle)
 		._drawCurve(phyVals, phyStyle)
+		._setActive(daysHalf)
 		._setMaskFn(changeValues);
 
 	$(window).on('resize', function(event) {
@@ -150,7 +151,9 @@ $(document).ready(function() {
 			._setHorizontalDesc(xDescriptions)
 			._drawCurve(emoVals, emoStyle)
 			._drawCurve(intVals, intStyle)
-			._drawCurve(phyVals, phyStyle);
+			._drawCurve(phyVals, phyStyle)
+			._setActive(daysHalf)
+			._setMaskFn(changeValues, function(){});
 	});
 
 });

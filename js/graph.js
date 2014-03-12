@@ -35,6 +35,7 @@ Graphie = function(window, id, settings) {
 		self.yDescItems = [];
 		self.curves = [];
 		self.masks = [];
+		self.activeItem = 0;
 		return self;
 	};
 
@@ -244,6 +245,7 @@ Graphie = function(window, id, settings) {
 				// console.log("x0:", x0, "x:", x);
 				mask = r.rect( (i !== 0) ? ( x - ( X / 2 ) ) : x , yOrig - max, (y2 !== y && i !== 0) ? X : X / 2 , opts.table.height )
 						.attr({"stroke-width": 0, "fill": "rgba(255, 255, 255, 0)"})
+						.toFront()
 						.data("i", i);
 				
 				masks.push(mask);
@@ -252,6 +254,7 @@ Graphie = function(window, id, settings) {
 		};
 		//console.log('Path:', p.join(''));
 		line = r.path(p.join('')).attr(style);
+		/*
 		line.hover(
 			function(){
 				this.attr(hStyle);
@@ -259,7 +262,7 @@ Graphie = function(window, id, settings) {
 			function(){
 				this.attr(style);
 			}, line, line);
-
+		*/
 		var item = {
 			line: line,
 			values: values,
@@ -273,18 +276,26 @@ Graphie = function(window, id, settings) {
 
 	self._setMaskFn = function (inFn, outFn, inFn2, outFn2) {
 		var hoverIn = typeof inFn2 === 'function' ? inFn2 : function () {
-				var i = this.data("i");
+				var i = this.data("i"),
+					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
-					self.curves[j].dots[i].show();
+					if (i !== act) {
+						self.curves[j].dots[i].show();
+					}
+					self.curves[j].dots[act].hide();
 				};
 				if (typeof inFn === "function") {
 					inFn.call(this, i);
 				}
 			},
 			hoverOut = typeof outFn2 === 'function' ? outFn2 : function () {
-				var i = this.data("i");
+				var i = this.data("i"),
+					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
-					self.curves[j].dots[i].hide();
+					if (i !== act){
+						self.curves[j].dots[i].hide();
+					}
+					self.curves[j].dots[act].show();
 				};
 				if (typeof outFn === "function") {
 					outFn.call(this, i);
@@ -296,6 +307,37 @@ Graphie = function(window, id, settings) {
 		};
 	};
 
+	self._setActive = function (num) {
+		self.activeItem = num ? num : self.activeItem;
+		for (var i = 0; i < self.curves.length; i++) {
+			self.curves[i].dots[self.activeItem].show();
+		};
+		self.xDescItems[self.activeItem].attr({"font-weight": "bold"});
+		return self;
+	};
+/*
+	self._setCanvasFn = function (inFn, outFn, inFn2, outFn2) {
+		var hoverIn = typeof inFn2 === 'function' ? inFn2 : function () {
+				var active = this.data("active");
+				if (typeof inFn === "function") {
+					inFn.call(this, i);
+				}
+			},
+			hoverOut = typeof outFn2 === 'function' ? outFn2 : function () {
+				var active = this.data("active");
+				for (var j = 0; j < self.curves.length; j++) {
+					for (var i = 0; i < self.curves[j].dots.length; i++) {
+						self.curves[j].dots[i].hide();
+					};
+				};
+				if (typeof outFn === "function") {
+					outFn.call(this, i);
+				}
+			};
+		
+		r.hover(hoverIn, hoverOut);
+	};
+*/
 	self._init();
 	self._setDefaults(settings, self.defaults);
 
