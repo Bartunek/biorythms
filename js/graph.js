@@ -1,5 +1,3 @@
-
-
 Graphie = function(window, id, settings) {
 
 	var self = this,
