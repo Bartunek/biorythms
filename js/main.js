@@ -102,13 +102,9 @@ $(document).ready(function() {
 		console.log("i:", i, "j:", j);
 		
 		var date = new Date( Date.UTC(thisDay.getFullYear(), thisDay.getMonth() + 1, thisDay.getDate()) + (i * dayLength) + dayLength ),
-			txt = date.getDate();
+			txt = date.getDate() - 1;
 		xDescriptions.push(txt += '.');
 		console.log('Date:', date, 'Year:', date.getFullYear());
-
-		if (i === 0) {
-			//debugger;
-		};
 
 		dateVals.push(date);
 		console.log(date);

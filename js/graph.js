@@ -88,12 +88,16 @@ Graphie = function(window, id, settings) {
 		opts.width =				settings.width || defaults.width;
 		opts.height =				settings.height || defaults.height;
 		opts.dots = 				settings.dots || defaults.dots;
-		opts.table = {}; opts.xDesc = {}; opts.yDesc = {};
+		opts.table = {}; opts.xDesc = {}; opts.xDescActive = {}; opts.yDesc = {};
+
 		if (!settings.table) {
 			settings.table = {};
 		}
 		if (!settings.xDesc) {
 			settings.xDesc = {};
+		}
+		if (!settings.xDescActive) {
+			settings.xDescActive = {};
 		}
 		if (!settings.yDesc) {
 			settings.yDesc = {};
@@ -110,6 +114,8 @@ Graphie = function(window, id, settings) {
 
 		opts.xDesc.text = 			settings.xDesc.text || defaults.xDesc.text;
 		opts.xDesc.dist =			settings.xDesc.dist || defaults.xDesc.dist;
+
+		opts.xDescActive.text = 	settings.xDescActive.text || defaults.xDescActive.text;
 
 		opts.yDesc.text = 			settings.yDesc.text || defaults.yDesc.text;
 		opts.yDesc.dist =			settings.yDesc.dist || defaults.yDesc.dist;
@@ -312,7 +318,7 @@ Graphie = function(window, id, settings) {
 		for (var i = 0; i < self.curves.length; i++) {
 			self.curves[i].dots[self.activeItem].show();
 		};
-		self.xDescItems[self.activeItem].attr({"font-weight": "bold"});
+		self.xDescItems[self.activeItem].attr(opts.xDescActive.text);
 		return self;
 	};
 /*
@@ -362,6 +368,13 @@ Graphie.prototype.defaults = {
 		text: {
 			"font":			"14px Arial",
 			"fill":			"#333",
+			"text-anchor":	"middle"
+		}
+	},
+	xDescActive: {
+		text: {
+			"font":			"bold 14px Arial",
+			"fill":			"#600",
 			"text-anchor":	"middle"
 		}
 	},
