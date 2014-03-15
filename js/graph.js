@@ -3,7 +3,7 @@ Graphie = function(window, id, settings) {
 	var self = this,
 		R = window.Raphael, // Get Raphael instance
 		r = R(id, settings.width, settings.height), // Create canvas
-		c = .5, // Corection coeficient
+		c = 0.5, // Corection coeficient
 		opts = {}, // configuration object
 		round = function (num, dec) {
 			dec = dec || 2;
@@ -68,8 +68,8 @@ Graphie = function(window, id, settings) {
 
 		for (var i = 1; i < rowCount; i++) {
 			path = path.concat([
-				"M",	Math.round(x) 					+ c,
-						Math.round(y + i * rowHeight) 	+ c,
+				"M",	Math.round(x)					+ c,
+						Math.round(y + i * rowHeight)	+ c,
 				"H",	Math.round(x + w)				+ c
 			]);
 		}
@@ -87,9 +87,14 @@ Graphie = function(window, id, settings) {
 	self._setDefaults = function(settings, defaults){
 		opts.width =				settings.width || defaults.width;
 		opts.height =				settings.height || defaults.height;
+<<<<<<< HEAD
 		opts.dots = 				settings.dots || defaults.dots;
 		opts.table = {}; opts.xDesc = {}; opts.xDescActive = {}; opts.yDesc = {};
 
+=======
+		opts.dots =					settings.dots || defaults.dots;
+		opts.table = {}; opts.xDesc = {}; opts.yDesc = {};
+>>>>>>> Syntax errors
 		if (!settings.table) {
 			settings.table = {};
 		}
@@ -110,18 +115,22 @@ Graphie = function(window, id, settings) {
 		opts.table.cols =			settings.table.cols || defaults.table.cols;
 		opts.table.strokeColor =	settings.table.strokeColor || defaults.table.strokeColor;
 		opts.table.width =			opts.width - opts.table.paddingLeft - opts.table.paddingRight;
-		opts.table.height =			opts.height - opts.table.paddingTop - opts.table.paddingBottom
+		opts.table.height =			opts.height - opts.table.paddingTop - opts.table.paddingBottom;
 
-		opts.xDesc.text = 			settings.xDesc.text || defaults.xDesc.text;
+		opts.xDesc.text =			settings.xDesc.text || defaults.xDesc.text;
 		opts.xDesc.dist =			settings.xDesc.dist || defaults.xDesc.dist;
 
+<<<<<<< HEAD
 		opts.xDescActive.text = 	settings.xDescActive.text || defaults.xDescActive.text;
 
 		opts.yDesc.text = 			settings.yDesc.text || defaults.yDesc.text;
+=======
+		opts.yDesc.text =			settings.yDesc.text || defaults.yDesc.text;
+>>>>>>> Syntax errors
 		opts.yDesc.dist =			settings.yDesc.dist || defaults.yDesc.dist;
 
-		opts.line = 				defaults.line;
-		opts.lineHover = 			defaults.lineHover;
+		opts.line =					defaults.line;
+		opts.lineHover =			defaults.lineHover;
 	};
 
 	self._reset = function (settings) {
@@ -129,7 +138,7 @@ Graphie = function(window, id, settings) {
 		r.clear();
 		r.setSize(opts.width, opts.height);
 		return self._init();
-	}
+	};
 
 	self._drawGrid = function () {
 		var X = ( ( opts.width - opts.table.paddingLeft - opts.table.paddingRight ) / opts.table.cols ),
@@ -156,8 +165,7 @@ Graphie = function(window, id, settings) {
 						opts.table.paddingTop - opts.xDesc.dist,
 						values[i]).attr(opts.xDesc.text)
 				);
-				values[i]
-			};
+			}
 		} else if (typeof values === "object") {
 
 		} else {
@@ -180,7 +188,7 @@ Graphie = function(window, id, settings) {
 						opts.table.paddingTop + ( stepLength * i ),
 						values[i]).attr(opts.yDesc.text)
 				);
-			};
+			}
 		} else if (typeof values === "object") {
 			// TODO Values are given as object of range and number of steps
 		} else {
@@ -190,16 +198,16 @@ Graphie = function(window, id, settings) {
 	};
 
 	self._drawCurve = function (values, style, hoverStyle) {
-		var p = [], dots = [], masks = [],
+		style = style || opts.line;
+		var p = [], dots = [], masks = [], line,
 			xOrig = opts.table.paddingLeft,
 			yOrig = opts.table.paddingTop + ( opts.table.height / 2 ),
 			max = opts.table.height / 2,
 			X = ( ( opts.width - opts.table.paddingLeft - opts.table.paddingRight ) / opts.table.cols ),
-			style = style || opts.line,
 			hStyle = hoverStyle || opts.lineHover;
 
 		for (var i = 0; i < values.length; i++) {
-			var x, x0, x2, y, y0, y1, cp1, cp2, d0X, d0Y, d2X, d2Y, a, coords, line, dot, mask;
+			var x, x0, x2, y, y0, y1, cp1, cp2, d0X, d0Y, d2X, d2Y, a, coords, dot, mask;
 
 			// Actual X coords, next X coords, previous X coords
 			x = round( xOrig + ( X * i ) );
@@ -257,7 +265,7 @@ Graphie = function(window, id, settings) {
 				masks.push(mask);
 			}
 
-		};
+		}
 		//console.log('Path:', p.join(''));
 		line = r.path(p.join('')).attr(style);
 		/*
@@ -273,7 +281,7 @@ Graphie = function(window, id, settings) {
 			line: line,
 			values: values,
 			dots: dots
-		}
+		};
 
 		self.masks = self.masks.length ? self.masks : masks;
 		self.curves.push(item);
@@ -285,11 +293,16 @@ Graphie = function(window, id, settings) {
 				var i = this.data("i"),
 					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
+<<<<<<< HEAD
 					if (i !== act) {
 						self.curves[j].dots[i].show();
 					}
 					self.curves[j].dots[act].hide();
 				};
+=======
+					self.curves[j].dots[i].show();
+				}
+>>>>>>> Syntax errors
 				if (typeof inFn === "function") {
 					inFn.call(this, i);
 				}
@@ -298,11 +311,16 @@ Graphie = function(window, id, settings) {
 				var i = this.data("i"),
 					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
+<<<<<<< HEAD
 					if (i !== act){
 						self.curves[j].dots[i].hide();
 					}
 					self.curves[j].dots[act].show();
 				};
+=======
+					self.curves[j].dots[i].hide();
+				}
+>>>>>>> Syntax errors
 				if (typeof outFn === "function") {
 					outFn.call(this, i);
 				}
@@ -310,7 +328,7 @@ Graphie = function(window, id, settings) {
 
 		for (var i = 0; i < self.masks.length; i++) {
 			self.masks[i].hover(hoverIn, hoverOut);
-		};
+		}
 	};
 
 	self._setActive = function (num) {
