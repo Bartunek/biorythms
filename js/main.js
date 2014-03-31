@@ -86,15 +86,6 @@ $(document).ready(function() {
 	days = settings.table.cols,
 	daysHalf = Math.abs(days / 2);
 
-/*
-	for (var i = 1; i < settings.table.cols + 2; i++) {
-		if ( i > 2 && i < settings.table.cols){
-			xDescriptions.push(i + ".");
-		} else {
-			xDescriptions.push("");
-		}
-	};
-*/
 	bio._setAccuracy(4);
 
 	var thisDay = new Date(Date.now());

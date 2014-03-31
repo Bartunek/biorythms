@@ -87,14 +87,9 @@ Graphie = function(window, id, settings) {
 	self._setDefaults = function(settings, defaults){
 		opts.width =				settings.width || defaults.width;
 		opts.height =				settings.height || defaults.height;
-<<<<<<< HEAD
 		opts.dots = 				settings.dots || defaults.dots;
 		opts.table = {}; opts.xDesc = {}; opts.xDescActive = {}; opts.yDesc = {};
 
-=======
-		opts.dots =					settings.dots || defaults.dots;
-		opts.table = {}; opts.xDesc = {}; opts.yDesc = {};
->>>>>>> Syntax errors
 		if (!settings.table) {
 			settings.table = {};
 		}
@@ -120,13 +115,9 @@ Graphie = function(window, id, settings) {
 		opts.xDesc.text =			settings.xDesc.text || defaults.xDesc.text;
 		opts.xDesc.dist =			settings.xDesc.dist || defaults.xDesc.dist;
 
-<<<<<<< HEAD
 		opts.xDescActive.text = 	settings.xDescActive.text || defaults.xDescActive.text;
-
 		opts.yDesc.text = 			settings.yDesc.text || defaults.yDesc.text;
-=======
-		opts.yDesc.text =			settings.yDesc.text || defaults.yDesc.text;
->>>>>>> Syntax errors
+
 		opts.yDesc.dist =			settings.yDesc.dist || defaults.yDesc.dist;
 
 		opts.line =					defaults.line;
@@ -293,16 +284,11 @@ Graphie = function(window, id, settings) {
 				var i = this.data("i"),
 					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
-<<<<<<< HEAD
 					if (i !== act) {
 						self.curves[j].dots[i].show();
 					}
 					self.curves[j].dots[act].hide();
 				};
-=======
-					self.curves[j].dots[i].show();
-				}
->>>>>>> Syntax errors
 				if (typeof inFn === "function") {
 					inFn.call(this, i);
 				}
@@ -311,16 +297,11 @@ Graphie = function(window, id, settings) {
 				var i = this.data("i"),
 					act = self.activeItem;
 				for (var j = 0; j < self.curves.length; j++) {
-<<<<<<< HEAD
 					if (i !== act){
 						self.curves[j].dots[i].hide();
 					}
 					self.curves[j].dots[act].show();
 				};
-=======
-					self.curves[j].dots[i].hide();
-				}
->>>>>>> Syntax errors
 				if (typeof outFn === "function") {
 					outFn.call(this, i);
 				}

@@ -1,11 +1,11 @@
 Bio = function (bday, actdate, accuracy, range) {
 
+	range = range || 1;
 	var self = this,
 		now = new Date(Date.now()),
 		dayLength = 86400000,
 		bDay, actDate, daysFromBirth,
 		acc = accuracy || 2,
-		range = range || 1,
 		roundNum = function (num, dec) {
 			return  Math.round( num * Math.pow( 10, dec ) ) / Math.pow( 10, dec );
 		};
@@ -29,7 +29,6 @@ Bio = function (bday, actdate, accuracy, range) {
 
 	self.setDate = function (date) {
 		if (typeof date.getDate() === 'number'){
-			console.log(date);
 			actDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()) - dayLength;
 			daysFromBirth = Math.round( ( actDate - bDay ) / dayLength);
 		} else {
