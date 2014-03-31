@@ -87,7 +87,7 @@ Graphie = function(window, id, settings) {
 	self._setDefaults = function(settings, defaults){
 		opts.width =				settings.width || defaults.width;
 		opts.height =				settings.height || defaults.height;
-		opts.dots = 				settings.dots || defaults.dots;
+		opts.dots =					settings.dots || defaults.dots;
 		opts.table = {}; opts.xDesc = {}; opts.xDescActive = {}; opts.yDesc = {};
 
 		if (!settings.table) {
@@ -115,9 +115,9 @@ Graphie = function(window, id, settings) {
 		opts.xDesc.text =			settings.xDesc.text || defaults.xDesc.text;
 		opts.xDesc.dist =			settings.xDesc.dist || defaults.xDesc.dist;
 
-		opts.xDescActive.text = 	settings.xDescActive.text || defaults.xDescActive.text;
-		opts.yDesc.text = 			settings.yDesc.text || defaults.yDesc.text;
+		opts.xDescActive.text =		settings.xDescActive.text || defaults.xDescActive.text;
 
+		opts.yDesc.text =			settings.yDesc.text || defaults.yDesc.text;
 		opts.yDesc.dist =			settings.yDesc.dist || defaults.yDesc.dist;
 
 		opts.line =					defaults.line;
@@ -145,7 +145,6 @@ Graphie = function(window, id, settings) {
 	};
 
 	self._setHorizontalDesc = function (values, cols) {
-		console.log('Horizontal descriptions', values);
 		cols = Array.isArray(values) ? values.length : opts.table.cols;
 		var stepLength = opts.table.width / ( cols - 1 );
 		if (Array.isArray(values)) {
@@ -166,7 +165,6 @@ Graphie = function(window, id, settings) {
 	};
 
 	self._setVerticalDesc = function (values, rows) {
-		console.log('Vertical descriptions:', values);
 		rows = Array.isArray(values) ? values.length : opts.table.rows;
 		var stepLength = opts.table.height / ( rows - 1 );
 		
@@ -189,13 +187,13 @@ Graphie = function(window, id, settings) {
 	};
 
 	self._drawCurve = function (values, style, hoverStyle) {
-		style = style || opts.line;
 		var p = [], dots = [], masks = [], line,
 			xOrig = opts.table.paddingLeft,
 			yOrig = opts.table.paddingTop + ( opts.table.height / 2 ),
 			max = opts.table.height / 2,
 			X = ( ( opts.width - opts.table.paddingLeft - opts.table.paddingRight ) / opts.table.cols ),
 			hStyle = hoverStyle || opts.lineHover;
+		style = style || opts.line;
 
 		for (var i = 0; i < values.length; i++) {
 			var x, x0, x2, y, y0, y1, cp1, cp2, d0X, d0Y, d2X, d2Y, a, coords, dot, mask;
@@ -243,11 +241,11 @@ Graphie = function(window, id, settings) {
 
 			if (opts.dots) {
 				dot = r.circle(x, y, style['stroke-width'] * 2).attr({"fill": style.stroke, "stroke-width": 0}).hide();
+				dot.node.setAttribute("pointer-events", "none");
 				dots.push(dot);
 			}
 
 			if (!self.masks.length){
-				// console.log("x0:", x0, "x:", x);
 				mask = r.rect( (i !== 0) ? ( x - ( X / 2 ) ) : x , yOrig - max, (y2 !== y && i !== 0) ? X : X / 2 , opts.table.height )
 						.attr({"stroke-width": 0, "fill": "rgba(255, 255, 255, 0)"})
 						.toFront()
@@ -257,17 +255,10 @@ Graphie = function(window, id, settings) {
 			}
 
 		}
-		//console.log('Path:', p.join(''));
+		
 		line = r.path(p.join('')).attr(style);
-		/*
-		line.hover(
-			function(){
-				this.attr(hStyle);
-			},
-			function(){
-				this.attr(style);
-			}, line, line);
-		*/
+		line.node.setAttribute("pointer-events", "none");
+
 		var item = {
 			line: line,
 			values: values,
@@ -286,9 +277,9 @@ Graphie = function(window, id, settings) {
 				for (var j = 0; j < self.curves.length; j++) {
 					if (i !== act) {
 						self.curves[j].dots[i].show();
+						self.curves[j].dots[act].hide();
 					}
-					self.curves[j].dots[act].hide();
-				};
+				}
 				if (typeof inFn === "function") {
 					inFn.call(this, i);
 				}
@@ -301,7 +292,7 @@ Graphie = function(window, id, settings) {
 						self.curves[j].dots[i].hide();
 					}
 					self.curves[j].dots[act].show();
-				};
+				}
 				if (typeof outFn === "function") {
 					outFn.call(this, i);
 				}
@@ -316,7 +307,7 @@ Graphie = function(window, id, settings) {
 		self.activeItem = num ? num : self.activeItem;
 		for (var i = 0; i < self.curves.length; i++) {
 			self.curves[i].dots[self.activeItem].show();
-		};
+		}
 		self.xDescItems[self.activeItem].attr(opts.xDescActive.text);
 		return self;
 	};
@@ -388,7 +379,7 @@ Graphie.prototype.defaults = {
 	line: {
 		"stroke": "#aaf",
 		"stroke-opacity": 0.7,
-		"stroke-width": 4,
+		"stroke-width": 4
 	},
 	lineHover: {
 		"stroke-opacity": 1
