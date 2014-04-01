@@ -92,8 +92,8 @@ $(document).ready(function() {
 	for (var i = -(daysHalf), j = 0; i <= daysHalf; i++, j++) {
 		console.log("i:", i, "j:", j);
 		
-		var date = new Date( Date.UTC(thisDay.getFullYear(), thisDay.getMonth() + 1, thisDay.getDate()) + (i * dayLength) + dayLength ),
-			txt = date.getDate() - 1;
+		var date = new Date( Date.UTC(thisDay.getFullYear(), thisDay.getMonth(), thisDay.getDate()) + (i * dayLength) ),
+			txt = date.getDate();
 		xDescriptions.push(txt += '.');
 		console.log('Date:', date, 'Year:', date.getFullYear());
 

@@ -18,8 +18,8 @@ Bio = function (bday, actdate, accuracy, range) {
 			console.log("Nebylo zadáno datum narození");
 			return false;
 		}
-		actDate = actdate ? actdate - dayLength : new Date(now.getFullYear(), now.getMonth(), now.getDate()) - dayLength;
-		daysFromBirth = Math.round( ( actDate - bDay ) / dayLength);
+		actDate = actdate ? actdate : new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		daysFromBirth = Math.round( ( actDate - bDay ) / dayLength );
 		console.log(new Date(actdate));
 	};
 
@@ -29,8 +29,12 @@ Bio = function (bday, actdate, accuracy, range) {
 
 	self.setDate = function (date) {
 		if (typeof date.getDate() === 'number'){
-			actDate = new Date(date.getFullYear(), date.getMonth(), date.getDate()) - dayLength;
-			daysFromBirth = Math.round( ( actDate - bDay ) / dayLength);
+			actDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+			console.log('Set date to: ', actDate, 'bDay: ', bDay, '\n');
+
+			daysFromBirth = Math.round( ( actDate - bDay ) / dayLength );
+
+			console.log('daysFromBirth: ', daysFromBirth, '\n');
 		} else {
 			console.log("Nebylo zadáno datum narození");
 			return false;
